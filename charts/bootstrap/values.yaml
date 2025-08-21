@@ -1,0 +1,31 @@
+# Desactivar todos los componentes de monitoreo en bootstrap
+prometheus-operator:
+  enabled: false
+prometheus:
+  enabled: false
+  additionalServiceMonitors: []  # No crear ServiceMonitors adicionales
+  prometheusSpec:
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+    podMonitorSelector: {}
+    podMonitorNamespaceSelector: {}
+alertmanager:
+  enabled: false
+grafana:
+  enabled: false
+kube-state-metrics:
+  enabled: false
+prometheus-node-exporter:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeEtcd:
+  enabled: false
+coreDns:
+  enabled: false  # Específicamente deshabilitar monitoreo de CoreDNS
+kubeDns:
+  enabled: false

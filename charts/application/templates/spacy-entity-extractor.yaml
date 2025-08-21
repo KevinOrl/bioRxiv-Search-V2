@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.config.spacy_entity_extractor.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.config.spacy_entity_extractor.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.config.spacy_entity_extractor.name }}
+    spec:
+      containers:
+        - name: spacy-entity-extractor
+          image: {{ .Values.config.docker_registry }}/{{ .Values.config.spacy_entity_extractor.image }}
+          env:
+            - name: RABBITMQ_HOST
+              value: "{{ .Values.config.rabbitmq.host }}"
+            - name: RABBITMQ_USER
+              value: "user"
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: databases-rabbitmq
+                  key: rabbitmq-password
+                  optional: false
+            - name: RABBITMQ_QUEUE_DOWNLOAD
+              value: "{{ .Values.config.rabbitmq.queue_download }}"
+          volumeMounts:
+            - name: raw-volume
+              mountPath: /mnt/raw
+            - name: augmented-volume
+              mountPath: /mnt/augmented
+      volumes:
+        - name: raw-volume
+          persistentVolumeClaim:
+            claimName: raw-pvc
+        - name: augmented-volume
+          persistentVolumeClaim:
+            claimName: augmented-pvc

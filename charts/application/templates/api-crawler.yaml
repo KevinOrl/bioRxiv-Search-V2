@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.config.api_crawler.name }}
+spec:
+  replicas: {{ .Values.config.api_crawler.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.config.api_crawler.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.config.api_crawler.name }}
+    spec:
+      containers:
+        - name: {{ .Values.config.api_crawler.name }}
+          image: {{ .Values.config.docker_registry }}/{{ .Values.config.api_crawler.image }}
+          env:
+            - name: RABBITMQ_HOST
+              value: "{{ .Values.config.rabbitmq.host }}"
+            - name: RABBITMQ_USER
+              value: "user"
+            - name: RABBITMQ_QUEUE_DOWNLOAD
+              value: "{{ .Values.config.rabbitmq.queue_download }}"
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: databases-rabbitmq
+                  key: rabbitmq-password
+                  optional: false
+            - name: RABBITMQ_QUEUE
+              value: "{{ .Values.config.rabbitmq.queue }}"
+            - name: BIORXIV_API_URL
+              value: "https://api.biorxiv.org/covid19/0"
+          volumeMounts:
+            - name: raw-volume
+              mountPath: /mnt/raw
+      volumes:
+        - name: raw-volume
+          persistentVolumeClaim:
+            claimName: raw-pvc

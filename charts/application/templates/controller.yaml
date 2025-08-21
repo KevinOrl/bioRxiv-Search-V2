@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.config.controller.name }}
+spec:
+  replicas: {{ .Values.config.controller.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.config.controller.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.config.controller.name }}
+    spec:
+      containers:
+        - name: {{ .Values.config.controller.name }}
+          image: {{ .Values.config.docker_registry }}/{{ .Values.config.controller.image }}
+          env:
+            - name: MONGO_URI
+              value: "mongodb+srv://luiscamilooc:q8hwhoSou1Etqxjf@biorxiv-search-v2.2nfxguj.mongodb.net/biorxivdb?retryWrites=true&w=majority&appName=BioRxiv-Search-V2"
+            - name: RABBITMQ_HOST
+              value: "{{ .Values.config.rabbitmq.host }}"
+            - name: RABBITMQ_USER
+              value: "user"
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: databases-rabbitmq
+                  key: rabbitmq-password
+                  optional: false
+            - name: RABBITMQ_QUEUE
+              value: "{{ .Values.config.rabbitmq.queue }}"
+            - name: BIORXIV_API_URL
+              value: "https://api.biorxiv.org/covid19/0"
+          ports:
+            - containerPort: 8080

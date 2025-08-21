@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.config.spark_job_processor.name }}
+spec:
+  # Ejecutar cada 5 minutos - puedes ajustar según tus necesidades
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: {{ .Values.config.spark_job_processor.name }}
+        spec:
+          containers:
+            - name: {{ .Values.config.spark_job_processor.name }}
+              image: {{ .Values.config.docker_registry }}/{{ .Values.config.spark_job_processor.image }}
+              env:
+                - name: MONGO_URI
+                  value: mongodb+srv://luiscamilooc:q8hwhoSou1Etqxjf@biorxiv-search-v2.2nfxguj.mongodb.net/?retryWrites=true&w=majority&appName=BioRxiv-Search-V2
+              volumeMounts:
+                - name: augmented-volume
+                  mountPath: /mnt/augmented
+          volumes:
+            - name: augmented-volume
+              persistentVolumeClaim:
+                claimName: augmented-pvc
+          restartPolicy: OnFailure

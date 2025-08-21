@@ -1,0 +1,29 @@
+config:
+  docker_registry: technowaffles # nombre de usuario de Docker
+  namespace: default
+
+  rabbitmq:
+    host: databases-rabbitmq # nombre del servicio RabbitMQ
+    user: user
+    queue: documentos_procesados
+    queue_download: documentos_descargados
+  api_crawler:
+    name: api-crawler # Nombre del servicio del crawler
+    image: api-crawler:latest # Cambia por tu imagen real
+    replicas: 1 # Número de réplicas del crawler
+  controller:
+    name: controller # Nombre del servicio del controlador
+    image: controller:latest # Cambia por tu imagen real
+    replicas: 1 # Número de réplicas del controlador
+  spark_job_processor:
+    name: spark-job-processor # Nombre del servicio del procesador de trabajos Spark
+    image: spark-job-processor:latest # Cambia por tu imagen real
+    replicas: 1 # Número de réplicas del procesador de trabajos Spark
+  spacy_entity_extractor:
+    name: spacy-entity-extractor # Nombre del servicio del extractor de entidades Spacy
+    image: spacy-entity-extractor:latest # Cambia por tu imagen real
+    replicas: 1 # Número de réplicas del extractor de entidades Spacy
+
+
+
+
