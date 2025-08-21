@@ -17,7 +17,7 @@ spec:
           image: {{ .Values.config.docker_registry }}/{{ .Values.config.controller.image }}
           env:
             - name: MONGO_URI
-              value: "mongodb+srv://luiscamilooc:q8hwhoSou1Etqxjf@biorxiv-search-v2.2nfxguj.mongodb.net/biorxivdb?retryWrites=true&w=majority&appName=BioRxiv-Search-V2"
+              value: "=#################"
             - name: RABBITMQ_HOST
               value: "{{ .Values.config.rabbitmq.host }}"
             - name: RABBITMQ_USER
